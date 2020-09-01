@@ -17,7 +17,7 @@ const String isolateName = 'isolate';
 final ReceivePort port = ReceivePort();
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 
 Future<void> main() async {
@@ -32,7 +32,7 @@ Future<void> main() async {
   AndroidAlarmManager.initialize();
 
   notificationAppLaunchDetails =
-  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   await NotificationHelper.initNotifications(flutterLocalNotificationsPlugin);
   NotificationHelper.requestIOSPermissions(flutterLocalNotificationsPlugin);
   runApp(MyApp());
@@ -66,15 +66,19 @@ class _HomePageState extends State<HomePage> {
   // The background
   static SendPort uiSendPort;
 
+  // app is open and minimizes is work, app is close not work
   Future<void> _someTask() async {
-    await NotificationHelper.showNotification(
-        flutterLocalNotificationsPlugin);
+    print('Rifa is ---> waiting');
+    // Ensure we've loaded the updated from the background isolate.
     print('Rifa is ---> showed');
   }
 
+  // app is open, minimizes, close is work
   // The callback for our alarm
   static Future<void> callback() async {
     print('Alarm fired!');
+
+    await NotificationHelper.showNotification(flutterLocalNotificationsPlugin);
 
     // This will be null if we're running in the background.
     uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);

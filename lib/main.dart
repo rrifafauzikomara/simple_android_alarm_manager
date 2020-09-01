@@ -4,14 +4,21 @@ import 'dart:ui';
 
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:simple_android_alarm_manager/utils/date_time_helper.dart';
+import 'package:simple_android_alarm_manager/utils/notification_helper.dart';
+
+import 'detail_page.dart';
 
 /// The name associated with the UI isolate's [SendPort].
 const String isolateName = 'isolate';
 
 /// A port used to communicate from a background isolate to the UI isolate.
 final ReceivePort port = ReceivePort();
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+NotificationAppLaunchDetails notificationAppLaunchDetails;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +30,11 @@ Future<void> main() async {
     isolateName,
   );
   AndroidAlarmManager.initialize();
+
+  notificationAppLaunchDetails =
+  await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  await NotificationHelper.initNotifications(flutterLocalNotificationsPlugin);
+  NotificationHelper.requestIOSPermissions(flutterLocalNotificationsPlugin);
   runApp(MyApp());
 }
 
@@ -34,6 +46,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       home: HomePage(title: 'Flutter Demo Home Page'),
+      routes: {
+        DetailPage.routeName: (context) => DetailPage(),
+      },
     );
   }
 }
@@ -52,7 +67,9 @@ class _HomePageState extends State<HomePage> {
   static SendPort uiSendPort;
 
   Future<void> _someTask() async {
-    Fluttertoast.showToast(msg: 'Hello Work');
+    await NotificationHelper.showNotification(
+        flutterLocalNotificationsPlugin);
+    print('Rifa is ---> showed');
   }
 
   // The callback for our alarm
@@ -71,6 +88,15 @@ class _HomePageState extends State<HomePage> {
     // Register for events from the background isolate. These messages will
     // always coincide with an alarm firing.
     port.listen((_) async => await _someTask());
+
+    NotificationHelper.configureSelectNotificationSubject(
+        context, DetailPage.routeName);
+  }
+
+  @override
+  void dispose() {
+    selectNotificationSubject.close();
+    super.dispose();
   }
 
   @override

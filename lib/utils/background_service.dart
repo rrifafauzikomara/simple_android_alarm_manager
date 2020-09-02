@@ -34,6 +34,6 @@ class BackgroundService {
   // app is open and minimizes is work, app is close not work
   static Future<void> someTask() async {
     // Ensure we've loaded the updated from the background isolate.
-    print('Rifa is ---> showed');
+    print('Updated data from the background isolate');
   }
 }

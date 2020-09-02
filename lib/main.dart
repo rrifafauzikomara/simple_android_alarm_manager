@@ -13,12 +13,12 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  static const title = 'Simple Alarm Manager';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Simple Background Task',
-      home: HomePage(title: 'Simple Background Task'),
+      title: title,
+      home: HomePage(title: title),
     );
   }
 }

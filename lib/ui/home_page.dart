@@ -17,9 +17,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    // Register for events from the background isolate. These messages will
-    // always coincide with an alarm firing.
     port.listen((_) async => await BackgroundService.someTask());
   }
 
@@ -34,12 +31,9 @@ class _HomePageState extends State<HomePage> {
           child: Text(
             'Schedule OneShot Alarm',
           ),
-          key: ValueKey('RegisterOneShotAlarm'),
           onPressed: () async {
-            print('Scheduled clicked');
             await AndroidAlarmManager.oneShotAt(
               DateTime.now().add(Duration(seconds: 5)),
-              // Ensure we have a unique alarm ID.
               Random().nextInt(pow(2, 31)),
               BackgroundService.callback,
               exact: true,

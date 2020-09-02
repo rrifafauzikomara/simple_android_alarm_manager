@@ -2,9 +2,6 @@ import 'dart:isolate';
 
 import 'dart:ui';
 
-import '../main.dart';
-import 'notification_helper.dart';
-
 /// The name associated with the UI isolate's [SendPort].
 const String isolateName = 'isolate';
 
@@ -29,8 +26,6 @@ class BackgroundService {
   static Future<void> callback() async {
     print('Alarm fired!');
 
-    await NotificationHelper.showNotification(flutterLocalNotificationsPlugin);
-
     // This will be null if we're running in the background.
     uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
     uiSendPort?.send(null);
@@ -38,7 +33,6 @@ class BackgroundService {
 
   // app is open and minimizes is work, app is close not work
   static Future<void> someTask() async {
-    print('Rifa is ---> waiting');
     // Ensure we've loaded the updated from the background isolate.
     print('Rifa is ---> showed');
   }

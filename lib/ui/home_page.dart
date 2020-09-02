@@ -3,10 +3,6 @@ import 'dart:math';
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_android_alarm_manager/utils/background_service.dart';
-import 'package:simple_android_alarm_manager/utils/date_time_helper.dart';
-import 'package:simple_android_alarm_manager/utils/notification_helper.dart';
-
-import 'detail_page.dart';
 
 class HomePage extends StatefulWidget {
   final String title;
@@ -25,15 +21,6 @@ class _HomePageState extends State<HomePage> {
     // Register for events from the background isolate. These messages will
     // always coincide with an alarm firing.
     port.listen((_) async => await BackgroundService.someTask());
-
-    NotificationHelper.configureSelectNotificationSubject(
-        context, DetailPage.routeName);
-  }
-
-  @override
-  void dispose() {
-    selectNotificationSubject.close();
-    super.dispose();
   }
 
   @override
@@ -51,7 +38,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () async {
             print('Scheduled clicked');
             await AndroidAlarmManager.oneShotAt(
-              DateTimeHelper.format(),
+              DateTime.now().add(Duration(seconds: 5)),
               // Ensure we have a unique alarm ID.
               Random().nextInt(pow(2, 31)),
               BackgroundService.callback,

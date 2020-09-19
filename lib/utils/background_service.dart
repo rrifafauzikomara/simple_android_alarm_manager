@@ -4,20 +4,20 @@ import 'dart:ui';
 final ReceivePort port = ReceivePort();
 
 class BackgroundService {
-  static String isolateName = 'isolate';
-  static SendPort uiSendPort;
+  static String _isolateName = 'isolate';
+  static SendPort _uiSendPort;
 
   static void initializeIsolate() {
     IsolateNameServer.registerPortWithName(
       port.sendPort,
-      isolateName,
+      _isolateName,
     );
   }
 
   static Future<void> callback() async {
     print('Alarm fired!');
-    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
-    uiSendPort?.send(null);
+    _uiSendPort ??= IsolateNameServer.lookupPortByName(_isolateName);
+    _uiSendPort?.send(null);
   }
 
   static Future<void> someTask() async {
